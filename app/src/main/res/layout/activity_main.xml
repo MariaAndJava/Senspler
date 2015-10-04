@@ -1,0 +1,97 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:orientation="vertical"
+    android:layout_height="match_parent"
+    android:id="@+id/main"
+    android:weightSum="1">
+
+        <TextView
+            android:layout_width="366dp"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:text="@string/Explanation"
+            android:id="@+id/textView"
+            android:textSize="20dp"
+            android:textColor="#505050"
+            android:layout_marginBottom="10dp"
+            android:layout_marginTop="20dp"
+            android:allowUndo="true"
+            android:layout_gravity="center_horizontal" />
+
+        <Spinner
+            android:layout_width="match_parent"
+            android:layout_height="70dp"
+            android:id="@+id/spinner"
+            android:background="#e5e5e5"
+            android:layout_gravity="center_horizontal"
+            android:spinnerMode="dropdown"
+            android:nestedScrollingEnabled="false"
+            android:scrollIndicators="right"
+            android:layout_marginBottom="5dp"
+            android:layout_weight="0.08" />
+
+
+    <Spinner
+        android:layout_width="match_parent"
+        android:layout_height="70dp"
+        android:id="@+id/spinner2"
+        android:background="#e5e5e5"
+        android:layout_gravity="center_horizontal"
+        android:spinnerMode="dropdown"
+        android:nestedScrollingEnabled="false"
+        android:scrollIndicators="right"
+        android:layout_marginBottom="5dp" />
+
+    <Spinner
+        android:layout_width="match_parent"
+        android:layout_height="70dp"
+        android:id="@+id/spinner3"
+        android:background="#e5e5e5"
+        android:spinnerMode="dropdown"
+        android:nestedScrollingEnabled="false"
+        android:scrollIndicators="right"
+        android:layout_marginBottom="5dp" />
+
+    <Spinner
+        android:layout_width="match_parent"
+        android:layout_height="70dp"
+        android:id="@+id/spinner4"
+        android:background="#e5e5e5"
+        android:spinnerMode="dropdown"
+        android:nestedScrollingEnabled="false"
+        android:scrollIndicators="right"
+        android:layout_marginBottom="5dp"
+        android:layout_gravity="center_horizontal" />
+
+    <Spinner
+        android:layout_width="match_parent"
+        android:layout_height="70dp"
+        android:id="@+id/spinner5"
+        android:background="#e5e5e5"
+        android:spinnerMode="dropdown"
+        android:nestedScrollingEnabled="false"
+        android:scrollIndicators="right"
+        android:layout_marginBottom="5dp" />
+
+    <EditText
+        android:hint="@string/editText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/editText"
+        android:inputType="text"
+        android:layout_marginTop="5dp"
+        android:autoText="false" />
+
+    <Button
+        android:layout_width="290dp"
+        android:layout_height="wrap_content"
+        android:text="@string/start"
+        android:id="@+id/buttonStart"
+        android:textSize="28dp"
+        android:background="@android:color/holo_orange_light"
+        android:layout_marginTop="5dp"
+        android:textColor="@android:color/background_light"
+        android:onClick="startRecording"
+        android:layout_gravity="center_horizontal" />
+</LinearLayout>
