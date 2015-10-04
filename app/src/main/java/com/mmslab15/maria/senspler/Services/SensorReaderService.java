@@ -31,24 +31,23 @@ public class SensorReaderService extends Service implements SensorEventListener,
     private Sensor light;
     private File fileNoWindowing;
     private File fileWindowing;
+    private int windowSize = 80;
     private float facing;
     private float pointing;
     private float upright;
     private String results;
     private boolean end = false;
     private float lux = 50;
-    private SensorReaderService sensorReaderService;
     private ArrayList<SampleBag> sensorEvents = new ArrayList();
-    private float[] valuesX = new float[20];
-    private float[] valuesY = new float[20];
-    private float[] valuesZ = new float[20];
-    private float[] valuesUpright = new float[20];
-    private float[] valuesLight = new float[20];
-    private float[] valuesPointing = new float[20];
-    private float[] valuesFacing = new float[20];
+    private float[] valuesX = new float[windowSize];
+    private float[] valuesY = new float[windowSize];
+    private float[] valuesZ = new float[windowSize];
+    private float[] valuesUpright = new float[windowSize];
+    private float[] valuesLight = new float[windowSize];
+    private float[] valuesPointing = new float[windowSize];
+    private float[] valuesFacing = new float[windowSize];
 
     public SensorReaderService() {
-        sensorReaderService = this;
     }
 
 
@@ -116,7 +115,7 @@ public class SensorReaderService extends Service implements SensorEventListener,
             results = sdf.format(bag.timestamp) + ", " + accX + ", " + accY + ", " + accZ + ", " + facing + ", " + pointing + ", " + upright + ", " + (int) bag.lux + ", " + deviceContext;
             writeToFile(results, fileNoWindowing);
 
-            if (i < 20) {
+            if (i < windowSize) {
                 valuesX[i] =  accX;
                 valuesY[i]=accY;
                 valuesZ[i]=accZ;
@@ -126,7 +125,8 @@ public class SensorReaderService extends Service implements SensorEventListener,
                 valuesLight[i]=lux;
                 i++;
             } else {
-                writeToFile(sdf.format(bag.timestamp) + computeWindowedResults(valuesX, valuesY, valuesZ, valuesFacing, valuesPointing, valuesUpright, valuesLight), fileWindowing);
+               String windowResults = computeWindowedResults(valuesX, valuesY, valuesZ, valuesFacing, valuesPointing, valuesUpright, valuesLight);
+                writeToFile(sdf.format(bag.timestamp) + windowResults, fileWindowing);
                 Arrays.fill(valuesX, 0);
                 Arrays.fill(valuesY, 0);
                 Arrays.fill(valuesZ, 0);
@@ -142,25 +142,24 @@ public class SensorReaderService extends Service implements SensorEventListener,
     }
 
     private String computeWindowedResults(float[] valuesX, float[] valuesY, float[] valuesZ, float[] valuesFacing, float[] valuesPointing, float[] valuesTilted, float[] valuesLight) {
-        String res = ", " + median(valuesLight) + ", " + zeroCrossings(valuesX) + ", " + zeroCrossings(valuesY) + ", " + zeroCrossings(valuesZ) + ", " + signalMagnitudeArea(valuesX, valuesY, valuesZ) + ", " + mean(valuesX) + ", " + mean(valuesY) + ", " + mean(valuesZ) + ", " + vote(valuesFacing) + ", " + vote(valuesPointing) + ", " + vote(valuesTilted) +  deviceContext;
-        return res;
+        return ", " + median(valuesLight)+  ", " + zeroCrossings(valuesX) + ", " + zeroCrossings(valuesY) + ", " + zeroCrossings(valuesZ) + ", " + signalMagnitudeArea(valuesX, valuesY, valuesZ) + ", " + mean(valuesX) + ", " + mean(valuesY) + ", " + mean(valuesZ) + ", " + vote(valuesFacing) + ", " + vote(valuesPointing) + ", " + vote(valuesTilted) +  deviceContext;
     }
 
 
     private float signalMagnitudeArea(float[] valuesX, float[] valuesY, float[] valuesZ) {
         float sma = 0;
-        for (int i = 0; i < 20; i++) {
+        for (int i = 0; i < windowSize; i++) {
             sma = Math.abs( valuesX[i]) +  Math.abs(valuesY[i]) +  Math.abs(valuesZ[i]);
         }
-        return sma /20f;
+        return sma /(float)windowSize;
     }
 
     private int zeroCrossings(float[] values) {
         int zc = 0;
         float median = median(values);
-        for (int i = 0; i < 18; i++) {
-            boolean case1 = (values[i] <= median & median < values[i+1])?true:false;
-            boolean case2 = (values[i] > median & median >= values[i+1])?true:false;
+        for (int i = 0; i < windowSize-2; i++) {
+            boolean case1 = (values[i] < median & median <= values[i + 1]);
+            boolean case2 = (values[i] > median & median >= values[i + 1]);
             if ( case1|| case2) {
                 zc++;
             }
@@ -170,23 +169,24 @@ public class SensorReaderService extends Service implements SensorEventListener,
 
     public int vote(float[] values) {
         float vote = 0;
-        for  (int i=0; i < 20; i++) {
+        for  (int i=0; i < windowSize; i++) {
             vote = vote + values[i];
         }
-        return (vote < 10) ? 0 : 1;
+        return (vote < windowSize/2) ? 0 : 1;
     }
 
     public float mean(float[] valuesLight) {
         float mean = 0;
-        for (int i=0; i < 20; i++) {
+        for (int i=0; i < windowSize; i++) {
             mean = mean + valuesLight[i];
         }
-        return mean / 20f;
+        return mean / (float)windowSize;
     }
 
     private float median(float[] valuesLight) {
-        Arrays.sort(valuesLight);
-        return valuesLight[9];
+        float[] values = valuesLight.clone();
+        Arrays.sort(values);
+        return values[windowSize/2];
     }
 
 

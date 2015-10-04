@@ -14,8 +14,8 @@ public class SamplerService extends Service implements Runnable {
     public static final String EXTRA_PARTOFDATA = "com.mmslab15.maria.senspler.SAMPLES_TAG2";
     private Intent intent;
     final private Handler readingsScheduler = new Handler();
-    final private int duration = 10000; //in msec 305000
-    final private int msecUntilStart = 000; //in msec 5000
+    final private int duration = 305000; //in msec 305000
+    final private int msecUntilStart = 5000; //in msec 5000
 
     public SamplerService() {
     }
